@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -d",
     "clean": "rm -rf dist"
   },
   "license": "MIT",
