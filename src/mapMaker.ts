@@ -66,4 +66,26 @@ export class MapMaker {
 
     return await res.text();
   }
+
+  setCollision(map: TownMap, x: number, y: number, value: boolean) {
+    // decode base64 string to buffer
+    const collisionBufer = Buffer.from(map.collisions, 'base64');
+
+    // set value
+    const pos = x + y * map.dimensions[0];
+    collisionBufer.fill(value ? 1 : 0, pos, pos + 1);
+
+    // encode buffer to base64 string
+    map.collisions = collisionBufer.toString('base64');
+  }
+
+  getCollision(map: TownMap, x: number, y: number) {
+    // decode base64 string to buffer
+    const collisionBufer = Buffer.from(map.collisions, 'base64');
+
+    // get value
+    const pos = x + y * map.dimensions[0];
+    return collisionBufer.readInt8(pos) === 1;
+  }
+
 }
