@@ -1,30 +1,16 @@
-
-export const ORIENTATION = {
-  ROTATED_0: 0,
-  ROTATED_90: 1,
-  ROTATED_180: 2,
-  ROTATED_270: 3,
-} as const;
-
 export interface TownMap {
   id: string;
   backgroundImagePath: string,
+  foregroundImagePath?: string,
   spawns: Spawn[],
   spaces: Space[],
   objects: TownObject[],
   collisions: string, // base64 encoded string from binary data. each byte is 0 (not impassable) or 1 (impassable)
   nooks: { [areaId: string]: Nook },
+  portals: Portal[],
+  dimensions: [number, number],
 }
 
-export interface Nook {
-  name: string;
-  nookCoords: {
-    coords: {
-      x: number,
-      y: number,
-    }
-  }
-};
 export interface Spawn {
   x: number,
   y: number,
@@ -37,6 +23,16 @@ export interface Space {
   y: number,
 };
 
+export interface Nook {
+  name: string;
+  nookCoords: {
+    coords: Array<{
+      x: number,
+      y: number,
+    }>
+  }
+};
+
 export interface Portal {
   targetX: number,
   targetY: number,
@@ -44,6 +40,17 @@ export interface Portal {
   x: number,
   y: number,
 }
+
+export const OBJECT_TYPE = {
+  NON_INTERACTIVE: 0,
+  IFRAME: 1,
+  IMAGE_POSTER: 2,
+  VIDEO: 3,
+  EXTERNAL_CALL: 4,
+  EXPERIMENTAL: 5,
+  NOTE: 6,
+  MODAL: 7,
+} as const;
 
 interface TownObjectCommon {
   width: number; // the width of the image (pixels wide / 32)
@@ -54,15 +61,19 @@ interface TownObjectCommon {
   id: string;
   normal: string; // a link to an img src for how the object should show up when you're not within interaction range
   highlighted: string; //a link to an img src for how the object should show up when you are within range (and this is the closest object)
-  orientation?: (typeof ORIENTATION)[keyof typeof ORIENTATION];
+  color?: string;
+  orientation?: number;
+  templateId?: string;
+  _tags?: Array<string>;
+  _name?: string;
 }
 
 export interface NonInteractiveObject extends TownObjectCommon {
-  type: 0;
+  type: typeof OBJECT_TYPE.NON_INTERACTIVE;
 }
 
 export interface IFrameObject extends TownObjectCommon {
-  type: 1;
+  type: typeof OBJECT_TYPE.IFRAME;
   properties: {
     url: string;
   }
@@ -70,7 +81,7 @@ export interface IFrameObject extends TownObjectCommon {
 
 
 export interface ImagePosterObject extends TownObjectCommon {
-  type: 2;
+  type: typeof OBJECT_TYPE.IMAGE_POSTER;
   properties: {
     image: string;  // the image you fullscreen when you press x
     preview: string; // the preview image that pops up at the bottom when you're in range
@@ -81,7 +92,7 @@ export interface ImagePosterObject extends TownObjectCommon {
 }
 
 export interface VideoObject extends TownObjectCommon {
-  type: 3;
+  type: typeof OBJECT_TYPE.VIDEO;
   properties: {
     video: string; // url of video you want. must be embedable
     // optional property for synced TV's
@@ -94,13 +105,19 @@ export interface VideoObject extends TownObjectCommon {
 }
 
 export interface ExternalCallObject extends TownObjectCommon {
+  type: typeof OBJECT_TYPE.EXTERNAL_CALL;
   properties: {
     zoomLink: string; // any url, usually to a zoom/webex/Meets/etc call
   }
 }
 
+
+export interface ExperimentalObject extends TownObjectCommon {
+  type: typeof OBJECT_TYPE.EXPERIMENTAL;
+}
+
 export interface NoteObject extends TownObjectCommon {
-  type: 6;
+  type: typeof OBJECT_TYPE.NOTE;
   properties: {
     message: string;// string, what shows up in the object
   }
@@ -108,7 +125,7 @@ export interface NoteObject extends TownObjectCommon {
 
 
 export interface ModalObject extends TownObjectCommon {
-  type: 7;
+  type: typeof OBJECT_TYPE.MODAL;
   properties: {
     extensionData: {
       entries: Array<{
@@ -120,4 +137,4 @@ export interface ModalObject extends TownObjectCommon {
   }
 }
 
-export type TownObject = NonInteractiveObject | IFrameObject | ImagePosterObject | VideoObject | ExternalCallObject | NoteObject | ModalObject;
+export type TownObject = NonInteractiveObject | IFrameObject | ImagePosterObject | VideoObject | ExternalCallObject | ExperimentalObject | NoteObject | ModalObject;

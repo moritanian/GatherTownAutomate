@@ -1,12 +1,7 @@
-export declare const ORIENTATION: {
-    readonly ROTATED_0: 0;
-    readonly ROTATED_90: 1;
-    readonly ROTATED_180: 2;
-    readonly ROTATED_270: 3;
-};
 export interface TownMap {
     id: string;
     backgroundImagePath: string;
+    foregroundImagePath?: string;
     spawns: Spawn[];
     spaces: Space[];
     objects: TownObject[];
@@ -14,15 +9,8 @@ export interface TownMap {
     nooks: {
         [areaId: string]: Nook;
     };
-}
-export interface Nook {
-    name: string;
-    nookCoords: {
-        coords: {
-            x: number;
-            y: number;
-        };
-    };
+    portals: Portal[];
+    dimensions: [number, number];
 }
 export interface Spawn {
     x: number;
@@ -34,6 +22,15 @@ export interface Space {
     x: number;
     y: number;
 }
+export interface Nook {
+    name: string;
+    nookCoords: {
+        coords: Array<{
+            x: number;
+            y: number;
+        }>;
+    };
+}
 export interface Portal {
     targetX: number;
     targetY: number;
@@ -41,6 +38,16 @@ export interface Portal {
     x: number;
     y: number;
 }
+export declare const OBJECT_TYPE: {
+    readonly NON_INTERACTIVE: 0;
+    readonly IFRAME: 1;
+    readonly IMAGE_POSTER: 2;
+    readonly VIDEO: 3;
+    readonly EXTERNAL_CALL: 4;
+    readonly EXPERIMENTAL: 5;
+    readonly NOTE: 6;
+    readonly MODAL: 7;
+};
 interface TownObjectCommon {
     width: number;
     height: number;
@@ -50,19 +57,23 @@ interface TownObjectCommon {
     id: string;
     normal: string;
     highlighted: string;
-    orientation?: (typeof ORIENTATION)[keyof typeof ORIENTATION];
+    color?: string;
+    orientation?: number;
+    templateId?: string;
+    _tags?: Array<string>;
+    _name?: string;
 }
 export interface NonInteractiveObject extends TownObjectCommon {
-    type: 0;
+    type: typeof OBJECT_TYPE.NON_INTERACTIVE;
 }
 export interface IFrameObject extends TownObjectCommon {
-    type: 1;
+    type: typeof OBJECT_TYPE.IFRAME;
     properties: {
         url: string;
     };
 }
 export interface ImagePosterObject extends TownObjectCommon {
-    type: 2;
+    type: typeof OBJECT_TYPE.IMAGE_POSTER;
     properties: {
         image: string;
         preview: string;
@@ -71,7 +82,7 @@ export interface ImagePosterObject extends TownObjectCommon {
     };
 }
 export interface VideoObject extends TownObjectCommon {
-    type: 3;
+    type: typeof OBJECT_TYPE.VIDEO;
     properties: {
         video: string;
         startTime?: {
@@ -82,18 +93,22 @@ export interface VideoObject extends TownObjectCommon {
     };
 }
 export interface ExternalCallObject extends TownObjectCommon {
+    type: typeof OBJECT_TYPE.EXTERNAL_CALL;
     properties: {
         zoomLink: string;
     };
 }
+export interface ExperimentalObject extends TownObjectCommon {
+    type: typeof OBJECT_TYPE.EXPERIMENTAL;
+}
 export interface NoteObject extends TownObjectCommon {
-    type: 6;
+    type: typeof OBJECT_TYPE.NOTE;
     properties: {
         message: string;
     };
 }
 export interface ModalObject extends TownObjectCommon {
-    type: 7;
+    type: typeof OBJECT_TYPE.MODAL;
     properties: {
         extensionData: {
             entries: Array<{
@@ -104,5 +119,5 @@ export interface ModalObject extends TownObjectCommon {
         };
     };
 }
-export declare type TownObject = NonInteractiveObject | IFrameObject | ImagePosterObject | VideoObject | ExternalCallObject | NoteObject | ModalObject;
+export declare type TownObject = NonInteractiveObject | IFrameObject | ImagePosterObject | VideoObject | ExternalCallObject | ExperimentalObject | NoteObject | ModalObject;
 export {};
