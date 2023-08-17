@@ -20,7 +20,11 @@ export class MapMaker {
   }
 
   async getMap(spaceId: string, mapId: string): Promise<TownMap> {
-    const res = await fetch(`https://gather.town/api/getMap?spaceId=${spaceId}&mapId=${mapId}&apiKey=${this.credential.key}`)
+    const res = await fetch(
+      `https://gather.town/api/v2/spaces/${encodeURIComponent(spaceId)}/maps/${encodeURIComponent(mapId)}`,
+      { headers: { apiKey: this.credential.key } }
+    );
+
     if (!res.ok) {
       await this.handleError(res);
     }
@@ -29,16 +33,19 @@ export class MapMaker {
   }
 
   async setMap(spaceId: string, mapId: string, map: TownMap): Promise<void> {
-    const res = await fetch(`https://gather.town/api/setMap`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        apiKey: this.credential.key,
-        spaceId: spaceId,
-        mapId: mapId,
-        mapContent: map
-      }),
-    });
+    const res = await fetch(
+      `https://gather.town/api/v2/spaces/${encodeURIComponent(spaceId)}/maps/${encodeURIComponent(mapId)}`,
+      {
+        method: 'POST',
+        headers: {
+          'apiKey': this.credential.key,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: map
+        }),
+      }
+    );
 
     if (!res.ok) {
       await this.handleError(res);

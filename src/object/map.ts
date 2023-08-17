@@ -1,10 +1,10 @@
 export interface TownMap {
   id: string;
+  name: string;
   backgroundImagePath: string,
   foregroundImagePath?: string,
   spawns: Spawn[],
-  spaces: Space[],
-  objects: TownObject[],
+  objects: { [objectId: string]: TownObject },
   collisions: string, // base64 encoded string from binary data. each byte is 0 (not impassable) or 1 (impassable)
   nooks: { [areaId: string]: Nook },
   portals: Portal[],
@@ -17,14 +17,9 @@ export interface Spawn {
   spawnId?: string,
 };
 
-export interface Space {
-  spaceId: string,
-  x: number,
-  y: number,
-};
-
 export interface Nook {
   name: string;
+  capacity?: number,
   nookCoords: {
     coords: Array<{
       x: number,
@@ -60,7 +55,8 @@ interface TownObjectCommon {
   y: number; // the y coordinate of the top left corner
   id: string;
   normal: string; // a link to an img src for how the object should show up when you're not within interaction range
-  highlighted: string; //a link to an img src for how the object should show up when you are within range (and this is the closest object)
+  zIndex: number;
+  highlighted?: string; //a link to an img src for how the object should show up when you are within range (and this is the closest object)
   color?: string;
   orientation?: number;
   templateId?: string;
