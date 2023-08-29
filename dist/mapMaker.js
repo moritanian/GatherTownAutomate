@@ -21,21 +21,21 @@ class MapMaker {
         throw new Error(`${res.status} ${res.url} ${res.statusText} ${content}`);
     }
     async getMap(spaceId, mapId) {
-        const res = await (0, node_fetch_1.default)(`https://gather.town/api/getMap?spaceId=${spaceId}&mapId=${mapId}&apiKey=${this.credential.key}`);
+        const res = await (0, node_fetch_1.default)(`https://gather.town/api/v2/spaces/${encodeURIComponent(spaceId)}/maps/${encodeURIComponent(mapId)}`, { headers: { apiKey: this.credential.key } });
         if (!res.ok) {
             await this.handleError(res);
         }
         return await res.json();
     }
     async setMap(spaceId, mapId, map) {
-        const res = await (0, node_fetch_1.default)(`https://gather.town/api/setMap`, {
+        const res = await (0, node_fetch_1.default)(`https://gather.town/api/v2/spaces/${encodeURIComponent(spaceId)}/maps/${encodeURIComponent(mapId)}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'apiKey': this.credential.key,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-                apiKey: this.credential.key,
-                spaceId: spaceId,
-                mapId: mapId,
-                mapContent: map
+                content: map
             }),
         });
         if (!res.ok) {

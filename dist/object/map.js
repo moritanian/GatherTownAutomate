@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OBJECT_TYPE = void 0;
 ;
 ;
-;
 exports.OBJECT_TYPE = {
     NON_INTERACTIVE: 0,
     IFRAME: 1,

@@ -1,10 +1,12 @@
 export interface TownMap {
     id: string;
+    name: string;
     backgroundImagePath: string;
     foregroundImagePath?: string;
     spawns: Spawn[];
-    spaces: Space[];
-    objects: TownObject[];
+    objects: {
+        [objectId: string]: TownObject;
+    };
     collisions: string;
     nooks: {
         [areaId: string]: Nook;
@@ -17,13 +19,9 @@ export interface Spawn {
     y: number;
     spawnId?: string;
 }
-export interface Space {
-    spaceId: string;
-    x: number;
-    y: number;
-}
 export interface Nook {
     name: string;
+    capacity?: number;
     nookCoords: {
         coords: Array<{
             x: number;
@@ -56,7 +54,8 @@ interface TownObjectCommon {
     y: number;
     id: string;
     normal: string;
-    highlighted: string;
+    zIndex: number;
+    highlighted?: string;
     color?: string;
     orientation?: number;
     templateId?: string;
